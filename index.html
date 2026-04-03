@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>La Familia Muñoz</title>
+<style>
+:root {
+  --bg:       #f7f3ee;
+  --card:     #ffffff;
+  --border:   #e8ddd0;
+  --g0:       #b54a22;
+  --g0-lt:    #fdf0eb;
+  --g1:       #2c4a72;
+  --g1-lt:    #eef3fa;
+  --g2:       #2d6148;
+  --g2-lt:    #eef6f1;
+  --g3:       #7a5c1e;
+  --g3-lt:    #fdf5e4;
+  --g4:       #7a3050;
+  --g4-lt:    #fdeef4;
+  --text:     #1a1208;
+  --muted:    #8a7560;
+  --serif:    Georgia, 'Times New Roman', serif;
+  --sans:     -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--g0);
+  color: #fff;
+  padding: 52px 24px 36px;
+  text-align: center;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 28px;
+  background: var(--bg);
+  border-radius: 28px 28px 0 0;
+}
+.header-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+.header-title {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.header-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* ── HINT ── */
+.hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 20px 24px 6px;
+}
+
+/* ── TREE ── */
+.tree { padding: 8px 16px 0; }
+
+.person { margin-bottom: 6px; }
+
+/* depth indents */
+.d1 { margin-left: 0; }
+.d2 { margin-left: 18px; }
+.d3 { margin-left: 36px; }
+.d4 { margin-left: 52px; }
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s, transform 0.1s;
+  user-select: none;
+  position: relative;
+}
+.person-row:active { transform: scale(0.98); }
+
+/* connector tick */
+.d2 .person-row::before,
+.d3 .person-row::before,
+.d4 .person-row::before {
+  content: '';
+  position: absolute;
+  left: -13px; top: 50%;
+  width: 9px; height: 1.5px;
+  background: var(--border);
+}
+
+/* gen accent bar */
+.bar { width: 4px; height: 30px; border-radius: 2px; flex-shrink: 0; }
+.b0 { background: var(--g0); }
+.b1 { background: var(--g1); }
+.b2 { background: var(--g2); }
+.b3 { background: var(--g3); }
+.b4 { background: var(--g4); }
+
+/* avatar */
+.av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 13px; font-weight: bold;
+  flex-shrink: 0;
+}
+.a0 { background: var(--g0-lt); color: var(--g0); }
+.a1 { background: var(--g1-lt); color: var(--g1); }
+.a2 { background: var(--g2-lt); color: var(--g2); }
+.a3 { background: var(--g3-lt); color: var(--g3); }
+.a4 { background: var(--g4-lt); color: var(--g4); }
+
+/* name area */
+.na { flex: 1; min-width: 0; }
+.nm {
+  font-size: 15px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mt {
+  display: flex; align-items: center; gap: 5px;
+  margin-top: 3px;
+}
+.rip {
+  font-size: 10px; font-weight: 500;
+  background: #f5efec; color: #9a7a6a;
+  padding: 1px 6px; border-radius: 10px;
+  border: 1px solid #e8ddd8;
+}
+.cnt {
+  font-size: 10px; color: var(--muted);
+  background: #f0ece6;
+  padding: 1px 6px; border-radius: 10px;
+}
+
+/* chevron */
+.ch {
+  width: 18px; height: 18px;
+  flex-shrink: 0; color: var(--muted);
+  transition: transform 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.ch svg { width: 13px; height: 13px; }
+.ch.open { transform: rotate(90deg); color: var(--text); }
+.no-ch .ch { opacity: 0; }
+
+/* open row tints */
+.open-row.g0 { background: var(--g0-lt); }
+.open-row.g1 { background: var(--g1-lt); }
+.open-row.g2 { background: var(--g2-lt); }
+.open-row.g3 { background: var(--g3-lt); }
+.open-row.g4 { background: var(--g4-lt); }
+
+/* children container */
+.kids { display: none; padding-top: 4px; position: relative; }
+.kids::before {
+  content: ''; position: absolute;
+  left: 20px; top: 0; bottom: 10px;
+  width: 1.5px; background: var(--border);
+}
+.kids.open { display: block; }
+
+/* ── LEGEND ── */
+.legend {
+  margin: 24px 16px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+.leg-title {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+}
+.leg-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 9px;
+}
+.leg-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
+.leg-pip { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* slide animation */
+@keyframes sd {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.kids.open > .person { animation: sd 0.16s ease both; }
+.kids.open > .person:nth-child(2) { animation-delay: .03s; }
+.kids.open > .person:nth-child(3) { animation-delay: .06s; }
+.kids.open > .person:nth-child(4) { animation-delay: .09s; }
+.kids.open > .person:nth-child(5) { animation-delay: .12s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Árbol Genealógico</div>
+  <div class="header-title">La Familia<br>Muñoz</div>
+  <div class="header-sub">Mayito &amp; Felipe</div>
+</div>
+
+<div class="hint">Toca un nombre para ver sus hijos ↓</div>
+
+<div class="tree" id="tree"></div>
+
+<div class="legend">
+  <div class="leg-title">Generaciones</div>
+  <div class="leg-grid" id="legend"></div>
+</div>
+
+<script>
+const ROOT = {
+  name: "Mayito & Felipe", gen: 0,
+  children: [
+    { name: "Chalola", gen: 1, rip: true, children: [
+      { name: "Odalis", gen: 2, children: [
+        { name: "Luis", gen: 3 },
+        { name: "Fatima", gen: 3 },
+        { name: "Dayanna", gen: 3 },
+      ]},
+      { name: "Edgar", gen: 2, rip: true },
+      { name: "Gilfredo", gen: 2 },
+      { name: "Leopoldo", gen: 2 },
+      { name: "Asdrubal", gen: 2 },
+    ]},
+    { name: "Yiyo", gen: 1, rip: true, children: [
+      { name: "Teresita", gen: 2, children: [
+        { name: "Luis Jose", gen: 3 },
+        { name: "Rosimar", gen: 3, children: [
+          { name: "Adabella", gen: 4 }
+        ]},
+      ]},
+      { name: "El Negro", gen: 2, children: [
+        { name: "Karelys", gen: 3, children: [
+          { name: "Fabrizio", gen: 4 }
+        ]},
+        { name: "Carlos", gen: 3 },
+        { name: "Luis Beltran", gen: 3 },
+      ]},
+      { name: "Virgilio", gen: 2 },
+      { name: "Maria", gen: 2 },
+      { name: "Yolaiza", gen: 2 },
+      { name: "Gricelda", gen: 2 },
+    ]},
+    { name: "Franco", gen: 1, rip: true, children: [
+      { name: "Javier", gen: 2, children: [
+        { name: "Andrea Valentina", gen: 3 },
+      ]},
+      { name: "Yoraida", gen: 2 },
+      { name: "Francisco Emilio", gen: 2 },
+      { name: "Carlos Antonio", gen: 2 },
+    ]},
+    { name: "America", gen: 1, children: [
+      { name: "Enrique", gen: 2, children: [
+        { name: "Gabriel", gen: 3 },
+        { name: "Estefania", gen: 3 },
+      ]},
+      { name: "Gilberto", gen: 2, children: [
+        { name: "Zulimar", gen: 3 },
+        { name: "Gilberto Enrique", gen: 3, children: [
+          { name: "Fiorella", gen: 4 }
+        ]},
+        { name: "Leomar", gen: 3 },
+      ]},
+      { name: "Mary", gen: 2, children: [
+        { name: "Grecia", gen: 3 },
+        { name: "Mariana", gen: 3 },
+      ]},
+    ]},
+    { name: "Yraida", gen: 1, rip: true, children: [
+      { name: "Delia", gen: 2, children: [
+        { name: "Kley", gen: 3, children: [
+          { name: "Kristopher", gen: 4 },
+          { name: "Kai", gen: 4 },
+        ]},
+        { name: "Kuky", gen: 3, children: [
+          { name: "Amanda", gen: 4 }
+        ]},
+        { name: "Tato", gen: 3, children: [
+          { name: "Stellina", gen: 4 }
+        ]},
+      ]}
+    ]},
+    { name: "Carlos", gen: 1, children: [
+      { name: "Carlos Felipe", gen: 2 },
+      { name: "Carlos Alexander", gen: 2 },
+    ]},
+    { name: "Egilda", gen: 1, children: [
+      { name: "Jhonny Jose", gen: 2 },
+      { name: "Jairo", gen: 2 },
+      { name: "Jhoniray", gen: 2 },
+    ]},
+    { name: "Elinor (Gorda)", gen: 1, children: [
+      { name: "Omarelys", gen: 2, rip: true },
+      { name: "Eliomar", gen: 2 },
+      { name: "Elimar", gen: 2 },
+    ]},
+  ]
+};
+
+function initials(n) {
+  const p = n.replace(/[()]/g,'').trim().split(' ').filter(Boolean);
+  return p.length === 1 ? p[0][0].toUpperCase() : (p[0][0] + p[p.length-1][0]).toUpperCase();
+}
+
+function countDesc(node) {
+  const ch = node.children || [];
+  return ch.length + ch.reduce((s,c) => s + countDesc(c), 0);
+}
+
+function build(person, depth) {
+  const ch = person.children || [];
+  const g = Math.min(person.gen, 4);
+  const dCls = ['d1','d1','d2','d3','d4'][Math.min(depth,4)];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'person';
+
+  const row = document.createElement('div');
+  row.className = `person-row g${g}${!ch.length ? ' no-ch' : ''}`;
+  wrap.classList.add(dCls);
+
+  // bar
+  const bar = document.createElement('div');
+  bar.className = `bar b${g}`;
+  row.appendChild(bar);
+
+  // avatar
+  const av = document.createElement('div');
+  av.className = `av a${g}`;
+  av.textContent = initials(person.name);
+  row.appendChild(av);
+
+  // name area
+  const na = document.createElement('div');
+  na.className = 'na';
+  const nm = document.createElement('div');
+  nm.className = 'nm';
+  nm.textContent = person.name;
+  na.appendChild(nm);
+
+  const mt = document.createElement('div');
+  mt.className = 'mt';
+  if (person.rip) {
+    const r = document.createElement('span');
+    r.className = 'rip';
+    r.textContent = '✝ Q.E.P.D.';
+    mt.appendChild(r);
+  }
+  if (ch.length) {
+    const c = document.createElement('span');
+    c.className = 'cnt';
+    const total = countDesc(person);
+    c.textContent = ch.length + (ch.length === 1 ? ' hijo' : ' hijos') + (total > ch.length ? ' · ' + total + ' desc.' : '');
+    mt.appendChild(c);
+  }
+  if (mt.children.length) na.appendChild(mt);
+  row.appendChild(na);
+
+  // chevron
+  const chev = document.createElement('div');
+  chev.className = 'ch';
+  chev.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  row.appendChild(chev);
+  wrap.appendChild(row);
+
+  if (ch.length) {
+    const kids = document.createElement('div');
+    kids.className = 'kids';
+    ch.forEach(c => kids.appendChild(build(c, depth + 1)));
+    wrap.appendChild(kids);
+
+    row.addEventListener('click', () => {
+      const open = kids.classList.toggle('open');
+      chev.classList.toggle('open', open);
+      row.classList.toggle('open-row', open);
+    });
+
+    if (depth === 0) {
+      kids.classList.add('open');
+      chev.classList.add('open');
+      row.classList.add('open-row');
+    }
+  }
+
+  return wrap;
+}
+
+document.getElementById('tree').appendChild(build(ROOT, 0));
+
+const LEGEND = [
+  { label: 'Fundadores',    color: '#b54a22' },
+  { label: 'Generación 1', color: '#2c4a72' },
+  { label: 'Generación 2', color: '#2d6148' },
+  { label: 'Generación 3', color: '#7a5c1e' },
+  { label: 'Generación 4', color: '#7a3050' },
+];
+const legEl = document.getElementById('legend');
+LEGEND.forEach(d => {
+  const item = document.createElement('div');
+  item.className = 'leg-item';
+  const pip = document.createElement('div');
+  pip.className = 'leg-pip';
+  pip.style.background = d.color;
+  const lbl = document.createElement('span');
+  lbl.textContent = d.label;
+  item.appendChild(pip);
+  item.appendChild(lbl);
+  legEl.appendChild(item);
+});
+</script>
+</body>
+</html>
